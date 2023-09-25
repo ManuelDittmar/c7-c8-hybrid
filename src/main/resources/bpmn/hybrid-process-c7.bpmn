@@ -25,14 +25,19 @@
     <bpmn:serviceTask id="StartInstanceInC8" name="Start Instance in C8" camunda:type="external" camunda:topic="start-c8-instance">
       <bpmn:extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="payload">${execution.processBusinessKey}</camunda:inputParameter>
-          <camunda:outputParameter name="correlationKey">${execution.processBusinessKey}</camunda:outputParameter>
+          <camunda:inputParameter name="correlationKey">${execution.processBusinessKey}</camunda:inputParameter>
+          <camunda:inputParameter name="bpmnProcessId">C8_First</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1slrupp</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_12biatx</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:intermediateCatchEvent id="MessageReceivedFromC8" name="Message received">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="correlationKey">${execution.processBusinessKey}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_12biatx</bpmn:incoming>
       <bpmn:outgoing>Flow_0aeo9yb</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_05h0qqk" messageRef="Message_3c55oju" />
@@ -82,12 +87,23 @@
       <bpmn:incoming>Flow_1yk1l4s</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:subProcess id="Activity_0oq6zkh" name="Call C8 Process">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="correlationKey">${execution.processBusinessKey}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_00ytmt0</bpmn:incoming>
       <bpmn:outgoing>Flow_1gih5ro</bpmn:outgoing>
       <bpmn:startEvent id="Event_0nus0m5">
         <bpmn:outgoing>Flow_1mznhgi</bpmn:outgoing>
       </bpmn:startEvent>
       <bpmn:serviceTask id="StartC8Process" name="Start Process" camunda:type="external" camunda:topic="start-c8-instance">
+        <bpmn:extensionElements>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="bpmnProcessId">C8_Second</camunda:inputParameter>
+            <camunda:inputParameter name="correlationKey">${execution.processBusinessKey}</camunda:inputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
         <bpmn:incoming>Flow_1mznhgi</bpmn:incoming>
         <bpmn:outgoing>Flow_1feflmh</bpmn:outgoing>
       </bpmn:serviceTask>
@@ -95,6 +111,11 @@
         <bpmn:incoming>Flow_02l1t0w</bpmn:incoming>
       </bpmn:endEvent>
       <bpmn:intermediateCatchEvent id="completed-message-c7" name="Process completed">
+        <bpmn:extensionElements>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="correlationKey">${execution.processBusinessKey}</camunda:inputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
         <bpmn:incoming>Flow_1feflmh</bpmn:incoming>
         <bpmn:outgoing>Flow_02l1t0w</bpmn:outgoing>
         <bpmn:messageEventDefinition id="MessageEventDefinition_0y25qbt" messageRef="Message_330pia6" />
@@ -226,6 +247,11 @@
       <bpmn:outgoing>Flow_1t7vdxu</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:endEvent id="ReportErrorEndEvent" name="Report Error">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="messageName">"error-message-c7"</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_06tab30</bpmn:incoming>
       <bpmn:messageEventDefinition id="MessageEventDefinition_0xlyux8" messageRef="Message_3fgonst" camunda:type="external" camunda:topic="error-message-c8" />
     </bpmn:endEvent>
@@ -240,7 +266,6 @@
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="messageName">message-c7</camunda:inputParameter>
-          <camunda:inputParameter name="correlationKey">${payload}</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1t7vdxu</bpmn:incoming>

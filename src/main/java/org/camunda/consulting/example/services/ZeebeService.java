@@ -3,6 +3,7 @@ package org.camunda.consulting.example.services;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.command.CreateProcessInstanceCommandStep1.CreateProcessInstanceCommandStep2;
 import io.camunda.zeebe.client.api.command.CreateProcessInstanceCommandStep1.CreateProcessInstanceCommandStep3;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,14 @@ public class ZeebeService implements EngineService {
   }
 
   @Override
-  public Object startInstance(String bpmnProcessId, Optional<Object> payload, Optional<Integer> version) {
+  public Object startInstance(String bpmnProcessId, String correlationKey, Optional<Object> payload, Optional<Integer> version) {
+
+    Map<String,Object> variables = new HashMap<>();
+    variables.put("correlationKey", correlationKey);
+
+    if(payload.isPresent()) {
+      variables.put("payload", payload.get());
+    }
 
     CreateProcessInstanceCommandStep2 step1 = zeebeClient.newCreateInstanceCommand().bpmnProcessId(bpmnProcessId);
     CreateProcessInstanceCommandStep3 step2;
@@ -26,11 +34,10 @@ public class ZeebeService implements EngineService {
     } else {
       step2 = step1.latestVersion();
     }
-    if(payload.isPresent()) {
-      return step2.variables(Map.of("payload",payload.get())).send().join();
-    } else {
-      return step2.send().join();
-    }
+    return step2
+        .variables(variables)
+        .send()
+        .join();
   }
 
   @Override
@@ -38,7 +45,7 @@ public class ZeebeService implements EngineService {
     return zeebeClient.newPublishMessageCommand()
         .messageName(messageName)
         .correlationKey(correlationKey)
-        .variables(payload)
+        .variables(Map.of("payload",payload))
         .send()
         .join();
   }

@@ -33,11 +33,10 @@ public class CamundaPlatformConfiguration {
     return (externalTask, externalTaskService) -> {
       try {
         String bpmnProcessId = externalTask.getVariable("bpmnProcessId");
+        String correlationKey = externalTask.getVariable("correlationKey");
         Optional<Object> payload = Optional.ofNullable(externalTask.getVariable("payload"));
         Optional<Integer> version = Optional.ofNullable(externalTask.getVariable("version"));
-        // Call Service
-        ProcessInstanceEvent processInstanceEvent = (ProcessInstanceEvent) zeebeService.startInstance(bpmnProcessId, payload, version);
-        // Set Variables
+        ProcessInstanceEvent processInstanceEvent = (ProcessInstanceEvent) zeebeService.startInstance(bpmnProcessId, correlationKey, payload, version);
         externalTaskService.complete(externalTask, Variables.putValue("processInstanceEvent", processInstanceEvent));
         LOG.info("Started instance for processId: " + bpmnProcessId + " with key: " + processInstanceEvent.getProcessInstanceKey());
       } catch (Exception e) {
@@ -55,10 +54,8 @@ public class CamundaPlatformConfiguration {
       String correlationKey = externalTask.getVariable("correlationKey");
       Optional<Object> payload = Optional.ofNullable(externalTask.getVariable("payload"));
       try {
-        // Call Service
         PublishMessageResponse messageResponse = (PublishMessageResponse) zeebeService.sendMessage(messageName, correlationKey, payload);
         LOG.info("Sent message: " + messageName + " with correlationKey: " + correlationKey);
-        // Set Variables
         externalTaskService.complete(externalTask, Variables.putValue("messageResponse", messageResponse));
       } catch (Exception e) {
         LOG.error("Error sending message", e);
@@ -72,9 +69,7 @@ public class CamundaPlatformConfiguration {
   public ExternalTaskHandler doSomething() {
     return (externalTask, externalTaskService) -> {
       try {
-        // Do something
         LOG.info("Doing something");
-        // Set Variables
         externalTaskService.complete(externalTask);
       } catch (Exception e) {
         LOG.error("Error doing something", e);

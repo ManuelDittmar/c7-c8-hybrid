@@ -20,7 +20,7 @@ public class TestC8Process {
 
   public static final String MAIN_PROCESS = "C8_First";
   public static final String CALLED_PROCESS = "C8_Second";
-  public static final String PAYLOAD = "{\"payload\":\"Hello World\",\"correlationKey\":1}";
+  public static final String PAYLOAD = "{\"payload\":\"Hello World\",\"correlationKey\":\"myCorrelationKey\"}";
   public static final String USER_TASK_JOB = "io.camunda.zeebe:userTask";
   private ZeebeTestEngine engine;
   private ZeebeClient client;
@@ -52,7 +52,7 @@ public class TestC8Process {
 
     client.newPublishMessageCommand()
         .messageName("message-c7")
-        .correlationKey("Hello World") // TODO FIX
+        .correlationKey("myCorrelationKey")
         .send()
         .join();
 
@@ -78,7 +78,7 @@ public class TestC8Process {
 
     client.newPublishMessageCommand()
         .messageName("message-c7")
-        .correlationKey(String.valueOf(1))
+        .correlationKey("myCorrelationKey")
         .send()
         .join();
 
@@ -105,7 +105,7 @@ public class TestC8Process {
 
     client.newPublishMessageCommand()
         .messageName("error-message-c7")
-        .correlationKey(String.valueOf(1))
+        .correlationKey("myCorrelationKey")
         .variables(PAYLOAD)
         .send()
         .join();
@@ -123,7 +123,7 @@ public class TestC8Process {
         .send()
         .join();
     getAndCompleteJob("do-something");
-    getAndCompleteJob("message-c7");
+    getAndCompleteJob("message-to-c7");
     assertThat(instanceEvent).isCompleted();
   }
 
@@ -138,7 +138,7 @@ public class TestC8Process {
 
     getJobAndThrow("do-something");
     assertThat(instanceEvent).isWaitingExactlyAtElements("ReportError");
-    getAndCompleteJob("error-message-c7");
+    getAndCompleteJob("message-to-c7");
     assertThat(instanceEvent).isCompleted();
   }
 

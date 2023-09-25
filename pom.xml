@@ -61,15 +61,9 @@
     </dependency>
 
     <dependency>
-      <groupId>io.camunda</groupId>
-      <artifactId>zeebe-client-java</artifactId>
-      <version>${camunda.zeebe.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>io.camunda.spring</groupId>
+      <artifactId>spring-boot-starter-camunda</artifactId>
+      <version>8.2.3</version>
     </dependency>
 
     <dependency>

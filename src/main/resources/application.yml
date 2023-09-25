@@ -15,6 +15,7 @@ camunda:
           variable-names:
               - bpmnProcessId
               - version
+              - correlationKey
               - payload
         message-to-c8:
           lock-duration: 10000

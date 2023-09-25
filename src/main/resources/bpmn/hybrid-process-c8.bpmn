@@ -191,7 +191,7 @@
           <zeebe:taskDefinition type="start-c7-instance" />
           <zeebe:ioMapping>
             <zeebe:input source="=&#34;C7_Second&#34;" target="bpmnProcessId" />
-            <zeebe:input source="=correlationKey" target="payload" />
+            <zeebe:input source="=correlationKey" target="correlationKey" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_1cmign6</bpmn:incoming>
@@ -236,14 +236,13 @@
         <zeebe:taskDefinition type="message-to-c7" />
         <zeebe:ioMapping>
           <zeebe:input source="=&#34;message-c8&#34;" target="messageName" />
-          <zeebe:input source="=payload" target="correlationKey" />
-          <zeebe:output source="=payload" target="correlationKey" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0mrqnee</bpmn:incoming>
       <bpmn:outgoing>Flow_01vro3f</bpmn:outgoing>
     </bpmn:sendTask>
     <bpmn:startEvent id="Event_1no22hb">
+      <bpmn:extensionElements />
       <bpmn:outgoing>Flow_0mrqnee</bpmn:outgoing>
     </bpmn:startEvent>
   </bpmn:process>
@@ -262,7 +261,11 @@
     </bpmn:serviceTask>
     <bpmn:endEvent id="Event_12m5xhv" name="Process completed">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="message-c7" />
+        <zeebe:taskDefinition type="message-to-c7" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;message-c7&#34;" target="messageName" />
+          <zeebe:input source="=correlationKey" target="correlationKey" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1yem6xn</bpmn:incoming>
       <bpmn:messageEventDefinition id="MessageEventDefinition_0t7x7z2" />
@@ -272,7 +275,11 @@
         <conversion:message severity="REVIEW">Attribute 'topic' on 'messageEventDefinition' was mapped. Is set as job type.</conversion:message>
         <conversion:message severity="INFO">Unused attribute 'type' on 'messageEventDefinition' is removed.</conversion:message>
         <conversion:reference>Message_20beb14</conversion:reference>
-        <zeebe:taskDefinition type="error-message-c7" />
+        <zeebe:taskDefinition type="message-to-c7" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;error-message-c7&#34;" target="messageName" />
+          <zeebe:input source="=correlationKey" target="correlationKey" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_10ajekh</bpmn:incoming>
       <bpmn:messageEventDefinition id="MessageEventDefinition_00rnojp" messageRef="Message_20beb14" />
@@ -530,24 +537,14 @@
         <dc:Bounds x="160" y="1020" width="1750" height="370" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0ovk8rr" bpmnElement="Event_1no22hb">
-        <dc:Bounds x="262" y="1127" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_18vgyna_di" bpmnElement="MessageToC7">
-        <dc:Bounds x="520" y="1105" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1mwidp7_di" bpmnElement="MessageReceived">
-        <dc:Bounds x="692" y="1124" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_1vb0nfa_di" bpmnElement="Event_1vb0nfa">
+        <dc:Bounds x="1812" y="1127" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="665" y="1167" width="90" height="14" />
+          <dc:Bounds x="1805" y="1170" width="51" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0vy5sra_di" bpmnElement="Gateway_0vy5sra" isMarkerVisible="true">
-        <dc:Bounds x="1385" y="1120" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0lglhhm_di" bpmnElement="FixManuallyC8">
-        <dc:Bounds x="1230" y="1290" width="100" height="80" />
+      <bpmndi:BPMNShape id="Activity_0z9hmkz_di" bpmnElement="SendSignal">
+        <dc:Bounds x="1510" y="1105" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0rybhnr_di" bpmnElement="Activity_0rybhnr" isExpanded="true">
@@ -582,15 +579,25 @@
         <di:waypoint x="1198" y="1145" />
         <di:waypoint x="1252" y="1145" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Activity_0z9hmkz_di" bpmnElement="SendSignal">
-        <dc:Bounds x="1510" y="1105" width="100" height="80" />
+      <bpmndi:BPMNShape id="Activity_0lglhhm_di" bpmnElement="FixManuallyC8">
+        <dc:Bounds x="1230" y="1290" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1vb0nfa_di" bpmnElement="Event_1vb0nfa">
-        <dc:Bounds x="1812" y="1127" width="36" height="36" />
+      <bpmndi:BPMNShape id="Gateway_0vy5sra_di" bpmnElement="Gateway_0vy5sra" isMarkerVisible="true">
+        <dc:Bounds x="1385" y="1120" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1mwidp7_di" bpmnElement="MessageReceived">
+        <dc:Bounds x="692" y="1124" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1805" y="1170" width="51" height="27" />
+          <dc:Bounds x="665" y="1167" width="90" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18vgyna_di" bpmnElement="MessageToC7">
+        <dc:Bounds x="520" y="1105" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ovk8rr" bpmnElement="Event_1no22hb">
+        <dc:Bounds x="262" y="1127" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1qtjpb9_di" bpmnElement="Event_0w2244k">
         <dc:Bounds x="1112" y="1227" width="36" height="36" />
@@ -598,9 +605,31 @@
           <dc:Bounds x="1097" y="1270" width="67" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="BPMNEdge_1dld2nu" bpmnElement="Flow_0mrqnee">
-        <di:waypoint x="298" y="1145" />
-        <di:waypoint x="520" y="1145" />
+      <bpmndi:BPMNEdge id="Flow_1m0tbpj_di" bpmnElement="Flow_1m0tbpj">
+        <di:waypoint x="1610" y="1145" />
+        <di:waypoint x="1812" y="1145" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qqzyrr_di" bpmnElement="Flow_1qqzyrr">
+        <di:waypoint x="1130" y="1263" />
+        <di:waypoint x="1130" y="1330" />
+        <di:waypoint x="1230" y="1330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s7j537_di" bpmnElement="Flow_0s7j537">
+        <di:waypoint x="1435" y="1145" />
+        <di:waypoint x="1510" y="1145" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wgnud8_di" bpmnElement="Flow_0wgnud8">
+        <di:waypoint x="1330" y="1330" />
+        <di:waypoint x="1410" y="1330" />
+        <di:waypoint x="1410" y="1170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1b4x2f8_di" bpmnElement="Flow_1b4x2f8">
+        <di:waypoint x="1320" y="1145" />
+        <di:waypoint x="1385" y="1145" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1tsy3yo_di" bpmnElement="Flow_1tsy3yo">
+        <di:waypoint x="728" y="1142" />
+        <di:waypoint x="780" y="1142" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0mzwm0w" bpmnElement="Flow_01vro3f">
         <di:waypoint x="620" y="1142" />
@@ -609,31 +638,9 @@
           <dc:Bounds x="494" y="254.5" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1tsy3yo_di" bpmnElement="Flow_1tsy3yo">
-        <di:waypoint x="728" y="1142" />
-        <di:waypoint x="780" y="1142" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0s7j537_di" bpmnElement="Flow_0s7j537">
-        <di:waypoint x="1435" y="1145" />
-        <di:waypoint x="1510" y="1145" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1b4x2f8_di" bpmnElement="Flow_1b4x2f8">
-        <di:waypoint x="1320" y="1145" />
-        <di:waypoint x="1385" y="1145" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0wgnud8_di" bpmnElement="Flow_0wgnud8">
-        <di:waypoint x="1330" y="1330" />
-        <di:waypoint x="1410" y="1330" />
-        <di:waypoint x="1410" y="1170" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1qqzyrr_di" bpmnElement="Flow_1qqzyrr">
-        <di:waypoint x="1130" y="1263" />
-        <di:waypoint x="1130" y="1330" />
-        <di:waypoint x="1230" y="1330" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1m0tbpj_di" bpmnElement="Flow_1m0tbpj">
-        <di:waypoint x="1610" y="1145" />
-        <di:waypoint x="1812" y="1145" />
+      <bpmndi:BPMNEdge id="BPMNEdge_1dld2nu" bpmnElement="Flow_0mrqnee">
+        <di:waypoint x="298" y="1145" />
+        <di:waypoint x="520" y="1145" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_09n35yv_di" bpmnElement="C8_Process_Two" isHorizontal="true">
         <dc:Bounds x="1550" y="80" width="400" height="280" />

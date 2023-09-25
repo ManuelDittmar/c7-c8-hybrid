@@ -1,5 +1,6 @@
 package org.camunda.consulting.example.services;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.camunda.community.rest.client.api.MessageApi;
@@ -31,13 +32,18 @@ public class CamundaPlatformService implements EngineService{
 
 
   @Override
-  public Object startInstance(String bpmnProcessId, Optional<Object> payload,
+  public Object startInstance(String bpmnProcessId, String correlationKey, Optional<Object> payload,
       Optional<Integer> version) {
+
+    Map<String,VariableValueDto> variables = new HashMap<>();
+    variables.put("correlationKey", new VariableValueDto().value(correlationKey));
+
+    if(payload.isPresent()) {
+      variables.put("payload", new VariableValueDto().value(payload.get()));
+    }
     try {
       StartProcessInstanceDto startInstance = new StartProcessInstanceDto();
-      if(payload.isPresent()) {
-        startInstance.variables(Map.of("payload",new VariableValueDto().value(payload.get())));
-      }
+      startInstance.setVariables(variables);
 
       return processDefinitionApi.startProcessInstanceByKey(bpmnProcessId, startInstance);
     } catch (ApiException e) {
