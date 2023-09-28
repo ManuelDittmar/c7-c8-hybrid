@@ -88,7 +88,7 @@ public class OptimizeEventInterceptor implements ClientInterceptor {
           .type(job.getType())
           .data(job.getVariables())
           .group(job.getElementId())
-          .traceid(job.getVariables().get("correlationKey") != null ? job.getVariables().get("correlationKey").toString() : String.valueOf(jobs.get(0).getProcessInstanceKey()))
+          .traceid(job.getVariables().get("correlationKey") != null ? job.getVariables().get("correlationKey").toString() : String.valueOf(job.getProcessInstanceKey()))
           .build())
           .collect(Collectors.toList());
 
