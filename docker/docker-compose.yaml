@@ -1,0 +1,45 @@
+services:
+        camunda-run:
+                image: registry.camunda.cloud/cambpm-ee/camunda-bpm-platform-ee:run-7.19.6
+                container_name: camunda-run
+                ports:
+                        - 8080:8080
+                restart: unless-stopped
+        optimize:
+                image: registry.camunda.cloud/optimize-ee/optimize:3.10.5
+                container_name: optimize
+                ports:
+                        - 8090:8090
+                        - 8091:8091
+                depends_on:
+                  elasticsearch:
+                    condition: service_healthy
+                volumes:
+                 - type: bind
+                   source: ./environment-config.yaml
+                   target: /optimize/config/environment-config.yaml
+
+        elasticsearch:
+                image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-7.17.5}
+                container_name: elasticsearch
+                ports:
+                      - 9200:9200
+                environment:
+                  - bootstrap.memory_lock=true
+                  - discovery.type=single-node
+                  - xpack.security.enabled=false
+                  - cluster.routing.allocation.disk.threshold_enabled=false
+                ulimits:
+                  memlock:
+                    soft: -1
+                    hard: -1
+                restart: always
+                healthcheck:
+                     test: [ "CMD-SHELL", "curl -f http://localhost:9200/_cat/health | grep -q green" ]
+                     interval: 30s
+                     timeout: 5s
+                     retries: 3
+                volumes:
+                  - elastic:/var/lib/docker/elasticsearch/data
+volumes:
+ elastic:

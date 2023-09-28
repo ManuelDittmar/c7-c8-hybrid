@@ -17,6 +17,7 @@
     <camunda.test-coverage.version>2.1.0</camunda.test-coverage.version>
     <spring-boot.version>2.7.12</spring-boot.version>
     <graaljs.version>21.1.0</graaljs.version>
+    <lombok.version>1.18.30</lombok.version>
     <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
     <maven.surefire.plugin.version>3.0.0-M5</maven.surefire.plugin.version>
     <java.version>17</java.version>
@@ -72,12 +73,29 @@
       <version>7.19.0</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java-util</artifactId>
+      <version>3.24.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.version}</version>
+    </dependency>
     <!-- Testing -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <version>${spring-boot.version}</version>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+      <version>${spring-boot.version}</version>
     </dependency>
 
     <dependency>

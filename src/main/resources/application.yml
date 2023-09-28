@@ -40,9 +40,8 @@ zeebe.client:
   cloud:
     region: bru-2
     clusterId: ece93f65-1e70-4c01-b8c9-9480d7159c8b
-    clientId: sOZ0z8FMJRXadrGiItviYSm2iL-CVy7b
-    clientSecret: Bzi4cPCbJBVwzta~k4BoOe0c7KjoFBiFWPkArjSNKJeU34hHy8LssaBsKOMm.P~z
-
+    clientId: i~1nQIIkdo6P94lD5pTTffRJX-2kdq.L
+    clientSecret: ndldFfGZAdSJVNEU2KDeIpxM2lOUH6e2VgcbCRPnERnvygiBvW8mNOCGKTRVxYPj
 
 server:
   port: 8081
