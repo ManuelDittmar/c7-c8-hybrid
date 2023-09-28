@@ -5,6 +5,10 @@ services:
                 ports:
                         - 8080:8080
                 restart: unless-stopped
+                volumes:
+                  - type: bind
+                    source: ./license.txt
+                    target: /camunda/.camunda/license.txt
         optimize:
                 image: registry.camunda.cloud/optimize-ee/optimize:3.10.5
                 container_name: optimize
@@ -18,6 +22,9 @@ services:
                  - type: bind
                    source: ./environment-config.yaml
                    target: /optimize/config/environment-config.yaml
+                 - type: bind
+                   source: ./license.txt
+                   target: /optimize/config/OptimizeLicense.txt
 
         elasticsearch:
                 image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-7.17.5}
