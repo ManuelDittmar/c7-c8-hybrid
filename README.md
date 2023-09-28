@@ -54,7 +54,7 @@ These steps facilitate efficient integration of the Ingest API, enabling seamles
 ## What you need to run the project
 
 - Camunda License Key (including Optimize) (update in [license.txt](./docker/license.txt))
-- Camunda EE Images
+- Camunda EE Images (You can also use Camunda Run CE. Optimize requires an Enterprise License)
 
 ```
 docker login registry.camunda.cloud
