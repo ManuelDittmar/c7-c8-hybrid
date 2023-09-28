@@ -105,7 +105,8 @@ public class OptimizeEventInterceptor implements ClientInterceptor {
         .headers(httpHeaders -> httpHeaders.addAll(headers))
         .bodyValue(cloudEvents)
         .retrieve()
-        .bodyToMono(String.class).block();
+        .bodyToMono(String.class)
+        .block();
   }
 }
 }
