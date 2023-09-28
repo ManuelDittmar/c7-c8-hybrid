@@ -43,5 +43,11 @@ zeebe.client:
     clientId: i~1nQIIkdo6P94lD5pTTffRJX-2kdq.L
     clientSecret: ndldFfGZAdSJVNEU2KDeIpxM2lOUH6e2VgcbCRPnERnvygiBvW8mNOCGKTRVxYPj
 
+optimize:
+  interceptor:
+    enabled: true
+    ingestionEndpoint: http://localhost:8090/api/ingestion/event/batch
+    token: my-token
+
 server:
   port: 8081

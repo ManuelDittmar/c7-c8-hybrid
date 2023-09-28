@@ -1,6 +1,7 @@
 package org.camunda.consulting.example.interceptor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -16,8 +17,10 @@ import io.grpc.ForwardingClientCallListener;
 import io.grpc.Metadata;
 import io.grpc.MethodDescriptor;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -25,10 +28,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class OptimizeEventInterceptor implements ClientInterceptor {
 
   private static final Logger LOG = Logger.getLogger(OptimizeEventInterceptor.class.getName());
-  public static final String OPTIMIZE_API_ENDPOINT = "http://localhost:8090/api/ingestion/event/batch";
-  public static final String TOKEN = "my-token";
+  private String optimizeEndpoint;
+  private String token;
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final WebClient webClient = WebClient.create();
+
+  public OptimizeEventInterceptor(String optimizeUrl, String optimizeToken) {
+    this.optimizeEndpoint = optimizeUrl;
+    this.token = optimizeToken;
+
+  }
 
   @Override
   public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(MethodDescriptor<ReqT, RespT> methodDescriptor,
@@ -58,8 +67,10 @@ public class OptimizeEventInterceptor implements ClientInterceptor {
     public void onMessage(RespT message) {
       if(message.toString().startsWith("jobs")) {
         try {
-          String json = JsonFormat.printer().print((MessageOrBuilder) message);
-          JsonNode jobs = objectMapper.readTree(json).get("jobs");
+          JsonNode jobs = objectMapper
+              .readTree(JsonFormat.printer()
+              .print((MessageOrBuilder) message))
+              .get("jobs");
           List<InterceptedActivatedJob> activatedJobs = objectMapper.convertValue(jobs, TypeFactory.defaultInstance()
               .constructCollectionType(List.class, InterceptedActivatedJob.class));
           ingestToOptimize(activatedJobs);
@@ -72,29 +83,25 @@ public class OptimizeEventInterceptor implements ClientInterceptor {
   }
 
   private void ingestToOptimize(List<InterceptedActivatedJob> jobs) {
-      List<OptimizeCloudEvent> cloudEvents = jobs.stream().map( job -> OptimizeCloudEvent
+      List<OptimizeCloudEvent> cloudEvents = jobs
+          .stream()
+          .map( job -> OptimizeCloudEvent
           .builder()
           .id(String.valueOf(job.getKey()))
           .source(job.getWorker())
           .type(job.getType())
           .data(job.getVariables())
           .group(job.getElementId())
-          .traceid(String.valueOf(job.getProcessInstanceKey()))
+          .traceid(job.getVariables().get("correlationKey") != null ? job.getVariables().get("correlationKey").toString() : String.valueOf(jobs.get(0).getProcessInstanceKey()))
           .build())
           .collect(Collectors.toList());
 
     HttpHeaders headers = new HttpHeaders();
-    headers.setBearerAuth(TOKEN);
-
-    try {
-      String jsonString = objectMapper.writeValueAsString(cloudEvents);
-      LOG.fine("Ingesting to Optimize: " + jsonString);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
-    }
+    headers.setBearerAuth(token);
+    LOG.fine("Ingesting to Optimize: " + cloudEvents);
 
     webClient.post()
-        .uri(OPTIMIZE_API_ENDPOINT)
+        .uri(optimizeEndpoint)
         .headers(httpHeaders -> httpHeaders.addAll(headers))
         .bodyValue(cloudEvents)
         .retrieve()

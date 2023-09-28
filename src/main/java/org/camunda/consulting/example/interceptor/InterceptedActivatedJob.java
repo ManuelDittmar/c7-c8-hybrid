@@ -1,6 +1,12 @@
 package org.camunda.consulting.example.interceptor;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -22,5 +28,18 @@ public class InterceptedActivatedJob {
   private String worker;
   private int retries;
   private long deadline;
-  private String variables;
+  @JsonProperty("variables")
+  private void unpackVariables(String variables) {
+    ObjectMapper objectMapper = new ObjectMapper();
+    try {
+      this.variables = objectMapper.readValue(variables, new TypeReference<>() {
+      });
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @JsonIgnore
+  private Map<String, Object> variables;
+
 }
