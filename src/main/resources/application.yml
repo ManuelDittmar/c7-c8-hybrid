@@ -36,12 +36,13 @@ camunda:
         do-something:
           lock-duration: 10000
 
-zeebe.client:
-  cloud:
-    region: bru-2
-    clusterId: ece93f65-1e70-4c01-b8c9-9480d7159c8b
-    clientId: i~1nQIIkdo6P94lD5pTTffRJX-2kdq.L
-    clientSecret: ndldFfGZAdSJVNEU2KDeIpxM2lOUH6e2VgcbCRPnERnvygiBvW8mNOCGKTRVxYPj
+zeebe:
+  client:
+    broker:
+      gateway-address: 127.0.0.1:26500
+    security:
+      plaintext: true
+
 
 optimize:
   interceptor:
@@ -50,4 +51,4 @@ optimize:
     token: my-token
 
 server:
-  port: 8081
+  port: 8082
