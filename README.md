@@ -1,13 +1,13 @@
 # Multi Engine Adaptation C7 - C8
 
-![Multi Engine](multi-engine.png)
+![Multi Engine](./images/multi-engine.png)
 
 ## Project Overview
 
 The project entails a partial transition to Camunda 8, offering substantial advantages. It involves adopting a Multi-Engine architecture where both Camunda 7 (c7) and Camunda 8 (c8) coexist and intercommunicate through APIs.
 
 **Process Diagram**:
-![Diagram](hybrid-process.png)
+![Diagram](./images/hybrid-process.png)
 
 ### Key Objectives
 
@@ -44,6 +44,34 @@ Camunda 8 Events are send to Optimize via a Interceptor. Following steps are hap
    Utilize the Ingest API endpoints to send a POST request with the prepared data.
 
 These steps facilitate efficient integration of the Ingest API, enabling seamless transmission and analysis of job-related data in Camunda Optimize.
+
+#### See Events in Optimize
+
+You need to enable Event Based Processes in Optimize:
+
+```
+engines:
+  'camunda-bpm':
+    eventImportEnabled: true
+
+eventBasedProcess:
+  authorizedUserIds: ['demo']
+  authorizedGroupIds: []
+  eventImport:
+    enabled: true
+```
+
+Now the ingested events are visible in Optimize
+
+1. Create BPMN Diagram
+
+2. Map Events
+
+![Map Events](./images/map-events-optimize.PNG)
+
+3. Create Reports
+
+![Create Reports](./images/combined-view-optimize.PNG)
 
 #### Limitations
 
